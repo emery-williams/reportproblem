@@ -9,7 +9,7 @@ function onOpen() {
 
 function sendEmail(row) {
   var ss = SpreadsheetApp.getActiveSpreadsheet(); 
-  var sheet = ss.getSheetByName("Form Responses 1");
+  var sheet = ss.getSheetByName("INSERT SPREADSHEET NAME HERE");
   
   // Get the active row
   // var row = sheet.getRange("A2:P2");
@@ -49,7 +49,7 @@ function sendEmail(row) {
         + '</HTML></BODY>';      
     
     // Send email
-    MailApp.sendEmail(email, "Williams Libraries - A problem you reported has been resolved", "", {htmlBody: message});
+    MailApp.sendEmail(email, "EMAIL SUBJECT GOES HERE", "", {htmlBody: message});
     
     // Update status
     statusCell.setValue("Email Sent");
@@ -66,7 +66,7 @@ function sendEmail(row) {
 
 function sendEproblem(row) {
   var ss = SpreadsheetApp.getActiveSpreadsheet(); 
-  var sheet = ss.getSheetByName("Form Responses 1");
+  var sheet = ss.getSheetByName("INSERT SPREADSHEET NAME HERE");
   
   // Get the active row
   // var row = sheet.getRange("A2:P2");
@@ -77,7 +77,7 @@ function sendEproblem(row) {
   
   // Get values of active row
   var data = row.getValues();
-  var email = 'eproblems@williams.libanswers.com';
+  var email = 'LIBANSWERS QUEUE EMAIL GOES HERE';
   var date = data[0][0];
   var dateString = date.toString();
   // Logger.log("date: " + dateString);
@@ -147,7 +147,7 @@ function EmailAskus(){
  var update = '';
   
  // Where are we sending this message?
- var email = 'ask@williams.libanswers.com';
+ var email = 'LIBANSWERS QUEUE EMAIL GOES HERE';
   
  // Set date/time variables to determine if message should be sent
  var now = new Date();
