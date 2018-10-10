@@ -1,0 +1,210 @@
+// Build custom menu for emailing when sheet opens
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Contact')
+  .addItem('Send Email', 'sendEmail')
+  .addItem('Send to E-Problems', 'sendEproblem')
+  .addToUi();
+}
+
+function sendEmail(row) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet(); 
+  var sheet = ss.getSheetByName("Form Responses 1");
+  
+  // Get the active row
+  // var row = sheet.getRange("A2:P2");
+  var row = sheet.getActiveRange();
+  
+  // Define cell to update later
+  var statusCell = row.getCell(1,9);
+  
+  // Get values of active row
+  var data = row.getValues();
+  var email = data[0][3];
+  var date = data[0][0];
+  var issue = data[0][1];
+  var info = data[0][7];
+  var statusValue = data[0][8];
+  // Logger.log('Email: ' + email);
+  // Logger.log('Date: ' + date);
+  // Logger.log('Issue: ' + issue);
+  // Logger.log('Info: ' + info);
+  // Logger.log('Status: ' + statusValue);
+
+  
+  if (statusValue != 'Email Sent') {
+    
+    // Build message
+    var message = '<HTML><BODY>'
+        + '<p>Hello,</p>'
+        + '<p>A problem you reported on '
+        + date 
+        + ' was recently resolved. Here are the details: </p>'
+        + '<p><strong>Issue Reported:</strong><br/>'
+        + issue
+        + '</p><p><strong>Resolution Details:</strong><br/>'
+        + info
+        + '</p>'
+        + '<p>Thank you for reporting this issue.</p>'  
+        + '</HTML></BODY>';      
+    
+    // Send email
+    MailApp.sendEmail(email, "Williams Libraries - A problem you reported has been resolved", "", {htmlBody: message});
+    
+    // Update status
+    statusCell.setValue("Email Sent");
+    
+    // Notify user
+    SpreadsheetApp.getUi().alert('Email sent');
+    
+  } else {
+    // Notify user
+    SpreadsheetApp.getUi().alert('You already emailed this!');
+  }
+  
+}
+
+function sendEproblem(row) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet(); 
+  var sheet = ss.getSheetByName("Form Responses 1");
+  
+  // Get the active row
+  // var row = sheet.getRange("A2:P2");
+  var row = sheet.getActiveRange();
+  
+  // Define cell to update later
+  var statusCell = row.getCell(1,10);
+  
+  // Get values of active row
+  var data = row.getValues();
+  var email = 'eproblems@williams.libanswers.com';
+  var date = data[0][0];
+  var dateString = date.toString();
+  // Logger.log("date: " + dateString);
+  var  niceDate = dateString.slice(0, 21);
+  // Logger.log("nice date: " + niceDate);
+  var issue = data[0][1];
+  var shortIssue = issue.slice(0, 25);
+  var permalink = data[0][2];
+  var statusValue = data[0][9];
+  // Logger.log('Email: ' + email);
+  // Logger.log('Date: ' + date);
+  // Logger.log('Issue: ' + issue);
+  // Logger.log('Short Issue: ' + shortIssue);
+  // Logger.log('Permalink: ' + permalink);
+  // Logger.log('Status: ' + statusValue);
+  var subject = niceDate + ' - ' + shortIssue;
+  // Logger.log('Subject: ' + subject);
+  
+  if (statusValue != 'Email Sent') {
+    
+    // Build message
+    var message = '<HTML><BODY>'
+        + '<p>Hello,</p>'
+        + '<p>A user recently reported a problem through the problem reporting form. Here are the details: </p>'
+        + '<p><strong>Issue Reported:</strong><br/>'
+        + issue
+        + '</p><p><strong>Link to record:</strong><br/>'
+        + permalink
+        + '</p>'
+        + '<p>Thank you!</p>'  
+        + '</HTML></BODY>';      
+    
+    // Send email
+    MailApp.sendEmail(email, subject, "", {htmlBody: message});
+    
+    // Update status
+    statusCell.setValue("Email Sent");
+    
+    // Notify user
+    SpreadsheetApp.getUi().alert('Email sent');
+    
+  } else {
+    // Notify user
+    SpreadsheetApp.getUi().alert('You already emailed this!');
+  }
+  
+}
+
+function EmailAskus(){
+ var ss = SpreadsheetApp.getActiveSpreadsheet();
+ var sheet = ss.getSheets()[0];
+
+ // This represents ALL the data
+ var range = sheet.getDataRange();
+ var values = range.getValues();
+ 
+ // Introduce variables
+ var row = '';
+ var date = '';
+ var from = '';
+ var issue = '';
+ var permalink = '';
+ var onCampus = '';
+ var staff = '';
+ var ill = '';
+ var emailed = '';
+ var update = '';
+  
+ // Where are we sending this message?
+ var email = 'ask@williams.libanswers.com';
+  
+ // Set date/time variables to determine if message should be sent
+ var now = new Date();
+ // Logger.log('now: '+ now);
+ var fifteenMinutesAgo = new Date(now.getTime() - (15 * 60 * 1000));
+ // Logger.log('Fifteen minutes ago: '+ fifteenMinutesAgo);
+
+ // Cycle through data
+ // for (var i = 0; i < values.length; i++) {
+ for (var i = 1; i < values.length; i++) {
+   date = values[i][0];
+   from = values[i][3];
+   issue = values[i][1];
+   permalink = values[i][2];
+   onCampus = values[i][4];
+   staff = values[i][5];
+   ill = values[i][6];
+   // emailed = values[i][9];
+   
+   // Logger.log("Row " + i + ":")
+   // Logger.log("Date: " + date);
+   // Logger.log("From: " + from);
+   // Logger.log("Issue: " + issue);
+   // Logger.log("Permalink: " + permalink);
+   // Logger.log("On Campus?: " + onCampus);
+   // Logger.log("Library Staff?: " + staff);
+   // Logger.log("Sent to Ask a Librarian?: " + emailed);
+   
+   if (staff == 'No') {
+     
+     // Logger.log("NOT library staff");
+     
+     if (date > fifteenMinutesAgo) {
+    
+       // Logger.log("This has not been emailed");
+       
+       // Build message
+       var message = '<HTML><BODY>'
+       + '<p>A problem with the catalog was recently reported. Here are the details: </p>'
+       + '<p><strong>Issue Reported:</strong><br/>'
+       + issue
+       + '</p><p><strong>Link to record:</strong><br/>'
+       + permalink
+       + '</p><p><strong>On campus?:</strong><br/>'
+       + onCampus
+       +'</p><p><strong>Requested through interlibrary loan?:</strong><br/>'
+       + ill
+       + '</p>'
+       + '</HTML></BODY>';      
+       
+       // Send email
+       // MailApp.sendEmail(email, "Catalog problem reported", "", {htmlBody: message});
+       MailApp.sendEmail(email, from, "Catalog problem reported", message);
+       
+       // Update status
+       // emailed.setValue("Email Sent"); 
+      }
+    }
+  }
+}
